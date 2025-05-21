@@ -20,6 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'username',
         'password',
     ];
 
@@ -44,5 +45,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    function getLoggedInUsers()
+    {
+        return User::join('sessions', 'sessions.user_id', '=', 'users.id')
+                    ->distinct()
+                    ->select(['users.id', 'users.name', 'users.email'])
+                    ->whereNotNull('sessions.user_id')
+              		->get();
     }
 }
